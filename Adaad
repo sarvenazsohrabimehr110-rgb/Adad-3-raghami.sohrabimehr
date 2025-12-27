@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی جدول مکانی رنگی - دبستان جورابچیان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --c1:#ff9a9e;--c2:#fecfef;--c3:#fecfef;--c4:#ffc3a0;--c5:#fc466b;
+            --purple:#8e44ad;--pink:#ff6bcb;--yellow:#feca57;--blue:#48dbfb;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Baloo Bhaijaan 2',cursive;}
+        body{
+            min-height:100vh;
+            background:linear-gradient(135deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5));
+            background-size:400% 400%;
+            animation:bgMove 12s ease infinite;
+            display:flex;align-items:center;justify-content:center;
+        }
+        @keyframes bgMove{
+            0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
+        }
+        .container{
+            width:90%;max-width:700px;
+            background:rgba(255,255,255,.85);
+            border-radius:30px;
+            box-shadow:0 15px 40px rgba(0,0,0,.2);
+            padding:25px 20px;
+            backdrop-filter:blur(5px);
+        }
+        h1{
+            color:var(--purple);
+            font-size:2.2em;
+            text-shadow:2px 2px 5px rgba(0,0,0,.15);
+            margin-bottom:15px;
+        }
+        .section{
+            margin:15px 0;
+            padding:15px;
+            border-radius:20px;
+            background:rgba(255,255,255,.6);
+            border:2px dashed var(--pink);
+        }
+        input[type=text],input[type=number]{
+            padding:10px 15px;
+            border-radius:15px;
+            border:3px solid var(--yellow);
+            font-size:1.3em;
+            width:65%;
+            text-align:center;
+            transition:.3s;
+        }
+        input:focus{outline:none;border-color:var(--blue);transform:scale(1.05);}
+        button{
+            padding:12px 30px;
+            margin:8px;
+            border:none;
+            border-radius:25px;
+            font-size:1.4em;
+            cursor:pointer;
+            transition:.3s;
+            box-shadow:0 5px 15px rgba(0,0,0,.2);
+        }
+        #startBtn{background:var(--pink);color:#fff;}
+        #startBtn:hover{background:#ff4fa0;transform:translateY(-3px);}
+        #checkBtn{background:var(--blue);color:#fff;}
+        #checkBtn:hover{background:#2eb3e8;transform:translateY(-3px);}
+        #nextBtn{background:var(--yellow);color:#333;}
+        #nextBtn:hover{background:#ffb320;transform:translateY(-3px);}
+        .placeBox{
+            display:flex;justify-content:center;flex-wrap:wrap;margin:20px 0;
+        }
+        .placeCard{
+            width:110px;height:110px;
+            margin:8px;
+            background:#fff;
+            border:4px solid var(--purple);
+            border-radius:20px;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            box-shadow:0 5px 15px rgba(0,0,0,.1);
+            transition:.3s;
+        }
+        .placeCard.bounce{animation:bounce .5s}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .placeLabel{font-size:1em;color:var(--purple);}
+        .placeInput{
+            width:70%;height:40px;font-size:1.7em;text-align:center;
+            border:2px solid var(--yellow);border-radius:10px;margin-top:5px;
+        }
+        #numberDisplay{
+            font-size:2.8em;font-weight:bold;color:var(--pink);
+            text-shadow:2px 2px 0 #fff,4px 4px 0 var(--purple);
+            margin:10px 0;
+        }
+        #feedback{min-height:40px;font-size:1.4em;font-weight:bold;margin-top:10px;}
+        .correct{color:#27ae60;}.incorrect{color:#e74c3c;}
+        .star{
+            position:absolute;font-size:2em;color:var(--yellow);
+            animation:fly 1s ease forwards;
+        }
+        @keyframes fly{to{transform:translateY(-150px) rotate(360deg);opacity:0}}
+        #teacherCredit{color:var(--purple);font-size:1.1em;margin-top:10px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>بازی جدول مکانی رنگی 🌈</h1>
+
+        <!-- بخش نام‌نویسی -->
+        <div id="nameSec" class="section">
+            <p style="font-size:1.3em;color:var(--purple);">به کلاس خانم <b>سروناز سهرابی‌مهر</b> خوش اومدی!</p>
+            <label>اسم کوچولوی عزیز:</label><br>
+            <input id="playerName" type="text" placeholder="اسمت رو بنویس">
+            <br><button id="startBtn">بزن بریم 🚀</button>
+        </div>
+
+        <!-- بخش بازی -->
+        <div id="gameSec" class="section" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:15px;">
+                <span style="font-size:1.4em;color:var(--purple);">⭐ امتیاز:</span>
+                <b id="score" style="font-size:1.6em;color:var(--pink);">0</b>
+            </div>
+            <p style="font-size:1.2em;">عدد زیر رو توی جدول مکانی بچین:</p>
+            <div id="numberDisplay">---</div>
+
+            <div class="placeBox">
+                <div class="placeCard" id="hCard">
+                    <span class="placeLabel">صدگان</span>
+                    <input id="hInput" class="placeInput" type="number" min="1" max="9">
+                </div>
+                <div class="placeCard" id="tCard">
+                    <span class="placeLabel">دهگان</span>
+                    <input id="tInput" class="placeInput" type="number" min="0" max="9">
+                </div>
+                <div class="placeCard" id="oCard">
+                    <span class="placeLabel">یکان</span>
+                    <input id="oInput" class="placeInput" type="number" min="0" max="9">
+                </div>
+            </div>
+
+            <button id="checkBtn">بررسی کن 🎯</button>
+        </div>
+
+        <!-- بخش نتیجه -->
+        <div id="resSec" class="section" style="display:none;">
+            <p id="feedback"></p>
+            <p id="teacherCredit">با تشکر از آموزش‌های رنگی خانم <b>سروناز سهرابی‌مهر</b>، معلم عزیز پایه‌ی دوم دبستان جورابچیان.</p>
+            <button id="nextBtn">سؤال بعدی 🌟</button>
+        </div>
+    </div>
+
+    <script>
+        let playerName='',score=0,currentNum='';
+        const $=id=>document.getElementById(id);
+        const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+
+        function createStar(parent){
+            const s=document.createElement('span');
+            s.className='star';s.textContent='⭐';
+            s.style.left=rand(10,90)+'%';
+            parent.appendChild(s);
+            setTimeout(()=>s.remove(),1000);
+        }
+        function generate(){
+            const h=rand(1,9),t=rand(0,9),o=rand(0,9);
+            currentNum=`${h}${t}${o}`;
+            return {h,t,o};
+        }
+        function loadQ(){
+            $('hInput').value='';$('tInput').value='';$('oInput').value='';
+            $('feedback').textContent='';
+            $('checkBtn').disabled=false;
+            $('nextBtn').style.display='none';
+            $('resSec').style.display='none';
+            generate();
+            $('numberDisplay').textContent=currentNum;
+        }
+        $('startBtn').onclick=()=>{
+            playerName=$('playerName').value.trim();
+            if(!playerName)return alert('اسمت رو بنویس تا بازی شروع بشه!');
+            $('nameSec').style.display='none';
+            $('gameSec').style.display='block';
+            score=0;$('score').textContent=score;
+            loadQ();
+        };
+        $('checkBtn').onclick=()=>{
+            const h=parseInt($('hInput').value);
+            const t=parseInt($('tInput').value);
+            const o=parseInt($('oInput').value);
+            if(isNaN(h)||isNaN(t)||isNaN(o))
+                return $('feedback').textContent='همه خونه‌ها رو پر کن!';
+            const correct={h:parseInt(currentNum[0]),t:parseInt(currentNum[1]),o:parseInt(currentNum[2])};
+            const ok=h===correct.h&&t===correct.t&&o===correct.o;
+            if(ok){
+                score+=10;
+                $('feedback').innerHTML=`آفرین ${playerName}! کاملاً درست بود ⭐`;
+                $('feedback').className='correct';
+                createStar($('resSec'));
+                ['hCard','tCard','oCard'].forEach(c=>$(c).classList.add('bounce'));
+            }else{
+                score=Math.max(0,score-5);
+                $('feedback').innerHTML=`ای وای! عدد ${currentNum} بود؛ تو نوشتی ${h} صدگان، ${t} دهگان، ${o} یکان.`;
+                $('feedback').className='incorrect';
+            }
+            $('score').textContent=score;
+            $('hInput').value=correct.h;
+            $('tInput').value=correct.t;
+            $('oInput').value=correct.o;
+            $('checkBtn').disabled=true;
+            $('nextBtn').style.display='inline-block';
+            $('resSec').style.display='block';
+        };
+        $('nextBtn').onclick=loadQ;
+    </script>
+</body>
+</html>
